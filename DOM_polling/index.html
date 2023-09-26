@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Polling Example with Default Parameters</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      // add target element to DOM
+      setTimeout(() => {
+        const containerDiv = document.getElementById("container");
+        containerDiv.innerHTML = `<div id="targetElement">This is the target element.</div>`;
+      }, 2000);
+
+      // DOM polling
+      function checkAndOperateOnElement({
+        getElement = () => null,
+        operation = () => {},
+        pollingInterval = 1000, // Default polling interval is 1000 ms (1 second)
+        timeoutDuration = 10000, // Default timeout duration is 10000 ms (10 seconds)
+        startTime = Date.now(),
+      }) {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+
+        const element = getElement();
+
+        if (element) {
+          // Element found in the DOM, perform your operation here
+          operation(element);
+        } else {
+          // Element not found, continue polling until timeout
+          if (elapsedTime < timeoutDuration) {
+            console.log(
+              "Element not found. Polling again in",
+              pollingInterval,
+              "ms."
+            );
+            setTimeout(
+              () =>
+                checkAndOperateOnElement({
+                  getElement,
+                  operation,
+                  pollingInterval,
+                  timeoutDuration,
+                  startTime,
+                }),
+              pollingInterval
+            );
+          } else {
+            console.log("Timeout exceeded. Operation cannot be performed.");
+          }
+        }
+      }
+
+      // Start the polling process
+      const getElement = () => {
+        const targetElementId = "targetElement";
+        const targetElement = document.getElementById(targetElementId);
+        return targetElement;
+      };
+      const operation = (element) => {
+        console.log(
+          "Element found! Performing operation:",
+          element.textContent
+        );
+      };
+      checkAndOperateOnElement({
+        getElement: getElement,
+        operation: operation,
+      });
+    </script>
+  </body>
+</html>
