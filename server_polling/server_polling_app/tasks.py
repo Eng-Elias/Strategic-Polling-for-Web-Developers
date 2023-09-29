@@ -1,4 +1,3 @@
-# your_django_project/your_django_app/tasks.py
 from __future__ import absolute_import, unicode_literals
 
 import time
