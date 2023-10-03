@@ -19,7 +19,7 @@ def get_simple_task_result(request, task_id):
     return Response({'status': result.status, 'result': result.result})
 
 
-@csrf_exempt
+@api_view(['POST'])
 def long_polling_view(request):
     # Initiate the time-consuming Celery task
     task = time_consuming_task.apply_async()
@@ -35,7 +35,7 @@ def long_polling_view(request):
     return Response(response_data)
 
 
-@csrf_exempt
+@api_view(['POST'])
 def run_celery_task(request):
     n = int(request.POST.get('n', 10))  # Default Fibonacci number is 10
 
@@ -46,7 +46,7 @@ def run_celery_task(request):
     return Response({'task_id': task_id})
 
 
-@csrf_exempt
+@api_view(['GET'])
 def check_task_result(request, task_id):
     task_result = TaskResult.objects.filter(task_id=task_id).first()
     if task_result:
