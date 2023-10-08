@@ -1,0 +1,122 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celery Task Runner</title>
+</head>
+<body>
+    <button onclick="runPrintMessageTask()">Run Print Message Task</button>
+    <button onclick="runFibonacciTask()">Run Fibonacci Task</button>
+    <div id="result"></div>
+
+    <script src="{% static '/js/polling_utils.js' %}"></script>
+    <script>
+        const resultDiv = document.getElementById('result');
+
+        function runPrintMessageTask() {
+            // Adjust the URL and parameters as needed for your specific API
+            const url = '/api/run_simple_task/';
+            const parameters = {
+                method: 'POST',
+                body: JSON.stringify({
+                    task_type: 'print_message'
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                handleSuccess: (result) => {
+                    console.log(result);
+                    setTimeout(() => {
+                        resultDiv.textContent = `The result of task (${result?.task_id}) is ${result?.result}`;
+                    });
+                },
+                finishPolling: (result) => {
+                    console.log(result);
+                    console.log('finish polling')
+                },
+                handleError: (result) => {
+                    console.log(result);
+                    setTimeout(() => {
+                        resultDiv.textContent = `Task (${result?.task_id}) is finished with error.`;
+                    });
+                },
+                handleMaximumRetriesError: (result) => {
+                    console.log(result);
+                    resultDiv.textContent = `Maximum retries error`;
+                },
+            };
+
+            PollingUtilities.pollingFetch({
+                parameters,
+                taskURL: url,
+                checkForResultsURL: '/api/simple_task_result',
+                maxPollingRetries: 100, // Adjust as needed
+                initialPollingTimeout: 1000, // Adjust as needed
+                taskURLSuccessCallback: (task) => {
+                    console.log(task);
+                    resultDiv.textContent = `Task (${task?.task_id}) is Running`;
+                },
+                startSpinnerCallback: () => {
+                    resultDiv.textContent = 'Starting Task...';
+                },
+                stopSpinnerCallback: () => {
+                    resultDiv.textContent = 'finish';
+                },
+            });
+        }
+
+        function runFibonacciTask() {
+            // Adjust the URL and parameters as needed for your specific API
+            const url = '/api/run_celery_task/';
+            const parameters = {
+                method: 'POST',
+                body: JSON.stringify({
+                    task_type: 'fibonacci'
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                handleSuccess: (result) => {
+                    console.log(result);
+                    setTimeout(() => {
+                        resultDiv.textContent = `The result of task (${result?.task_id}) is ${result?.result}`;
+                    });
+                },
+                finishPolling: (result) => {
+                    console.log(result);
+                    console.log('finish polling')
+                },
+                handleError: (result) => {
+                    console.log(result);
+                    setTimeout(() => {
+                        resultDiv.textContent = `Task (${result?.task_id}) is finished with error.`;
+                    });
+                },
+                handleMaximumRetriesError: (result) => {
+                    console.log(result);
+                    resultDiv.textContent = `Maximum retries error`;
+                },
+            };
+
+            PollingUtilities.pollingFetch({
+                parameters,
+                taskURL: url,
+                checkForResultsURL: '/api/check_task_result',
+                maxPollingRetries: 100, // Adjust as needed
+                initialPollingTimeout: 1000, // Adjust as needed
+                taskURLSuccessCallback: (task) => {
+                    console.log(task);
+                    resultDiv.textContent = `Task (${task?.task_id}) is Running`;
+                },
+                startSpinnerCallback: () => {
+                    resultDiv.textContent = 'Starting Task...';
+                },
+                stopSpinnerCallback: () => {
+                    resultDiv.textContent = 'finish';
+                },
+            });
+        }
+    </script>
+</body>
+</html>
