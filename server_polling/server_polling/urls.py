@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+
+from server_polling_app.views import render_home_page
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('server_polling_app.urls')),
+    path('', render_home_page),
 ]

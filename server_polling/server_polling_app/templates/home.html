@@ -50,7 +50,7 @@
             PollingUtilities.pollingFetch({
                 parameters,
                 taskURL: url,
-                checkForResultsURL: '/api/simple_task_result',
+                checkForResultsURL: '/api/check_task_result',
                 maxPollingRetries: 100, // Adjust as needed
                 initialPollingTimeout: 1000, // Adjust as needed
                 taskURLSuccessCallback: (task) => {

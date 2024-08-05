@@ -5,8 +5,7 @@ from celery import Celery
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server_polling.settings')
 
-app = Celery('server_polling_app', broker='redis://redis:6379/0')
-# app = Celery('server_polling_app')
+app = Celery('server_polling_app')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

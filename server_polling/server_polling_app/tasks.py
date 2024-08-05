@@ -8,14 +8,15 @@ from celery import shared_task
 
 
 @shared_task
-def print_message(delay):
+def print_message(delay, *args, **kwargs):
     time.sleep(delay)
-    print("Message printed after {} seconds".format(delay))
-    return "Message printed after {} seconds".format(delay)
+    result = "Message printed after {} seconds".format(delay)
+    print(result)
+    return result
 
 
 @shared_task
-def time_consuming_task():
+def time_consuming_task(self, *args, **kwargs):
     # Simulate a time-consuming task
     time.sleep(10)
     return "Task completed successfully"
@@ -32,9 +33,8 @@ def fibonacci(n):
 
 
 @shared_task(bind=True)
-def calculate_fibonacci(n):
-    logger.info('Task started for Fibonacci number {0}'.format(n))
+def calculate_fibonacci(self, n, *args, **kwargs):
+    logger.info("Task started for Fibonacci number {0}".format(n))
     result = fibonacci(n)
-    print("Fibonacci({0}) = {1}".format(n, result))
-    logger.info('Task finished for Fibonacci number {0}: {1}'.format(n, result))
+    logger.info("Task finished for Fibonacci number {0}: {1}".format(n, result))
     return result

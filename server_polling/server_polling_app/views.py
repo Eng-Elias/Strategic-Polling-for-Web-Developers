@@ -1,22 +1,16 @@
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django_celery_results.models import TaskResult
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .tasks import print_message, time_consuming_task, calculate_fibonacci
+from django.http import JsonResponse
 
 
 @api_view(['POST'])
 def run_simple_task(request):
     delay = request.data.get('delay', 5)  # Default delay is 5 seconds
-    result = print_message.apply_async(args=[delay])
-    return Response({'task_id': result.id}, status=202)
-
-
-@api_view(['GET'])
-def get_simple_task_result(request, task_id):
-    result = print_message.AsyncResult(task_id)
-    return Response({'status': result.status, 'result': result.result})
+    task = print_message.apply_async(args=[delay])
+    return Response({'task_id': task.id}, status=202)
 
 
 @api_view(['POST'])
@@ -29,6 +23,7 @@ def long_polling_view(request):
 
     # Retrieve the task result and send it as a JSON response
     response_data = {
+        'task_id': task.id,
         'status': task_result.status,
         'result': task_result.result,
     }
@@ -55,8 +50,7 @@ def check_task_result(request, task_id):
     else:
         status = 'PENDING'
         result = None
-
-    return Response({'status': status, 'result': result})
+    return Response({'task_id': task_id, 'status': status, 'result': result})
 
 
 def render_home_page(request):
