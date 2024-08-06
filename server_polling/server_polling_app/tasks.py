@@ -1,10 +1,16 @@
-from __future__ import absolute_import, unicode_literals
-
 import time
-
 from celery.utils.log import get_task_logger
-
 from celery import shared_task
+
+
+logger = get_task_logger(__name__)
+
+
+@shared_task
+def time_consuming_task(*args, **kwargs):
+    # Simulate a time-consuming task
+    time.sleep(5)
+    return "Task completed successfully"
 
 
 @shared_task
@@ -13,16 +19,6 @@ def print_message(delay, *args, **kwargs):
     result = "Message printed after {} seconds".format(delay)
     print(result)
     return result
-
-
-@shared_task
-def time_consuming_task(self, *args, **kwargs):
-    # Simulate a time-consuming task
-    time.sleep(10)
-    return "Task completed successfully"
-
-
-logger = get_task_logger(__name__)
 
 
 def fibonacci(n):

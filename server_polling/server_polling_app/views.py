@@ -15,19 +15,15 @@ def run_simple_task(request):
 
 @api_view(['POST'])
 def long_polling_view(request):
-    # Initiate the time-consuming Celery task
-    task = time_consuming_task.apply_async()
-
-    # Hold the response until the task is completed
-    task_result = task.get(on_message=lambda message: None, propagate=False)
-
-    # Retrieve the task result and send it as a JSON response
-    response_data = {
-        'task_id': task.id,
-        'status': task_result.status,
-        'result': task_result.result,
-    }
-    return Response(response_data)
+    try:
+        # Initiate the time-consuming Celery task
+        task = time_consuming_task.apply_async()
+        # Hold the response until the task is completed
+        task_result = task.get()
+        print(type(task_result))
+        return Response(task_result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
 
 
 @api_view(['POST'])

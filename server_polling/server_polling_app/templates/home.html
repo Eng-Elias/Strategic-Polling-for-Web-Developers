@@ -6,6 +6,7 @@
     <title>Celery Task Runner</title>
 </head>
 <body>
+    <button onclick="runLongPollingTask()">Run Long Polling Task</button>
     <button onclick="runPrintMessageTask()">Run Print Message Task</button>
     <button onclick="runFibonacciTask()">Run Fibonacci Task</button>
     <div id="result"></div>
@@ -13,6 +14,19 @@
     <script src="{% static '/js/polling_utils.js' %}"></script>
     <script>
         const resultDiv = document.getElementById('result');
+
+        function runLongPollingTask() {
+            resultDiv.textContent = `Long polling is running`;
+            fetch('/api/long_polling/', {
+                method: 'POST',
+            }).then((response) => {
+                return response.text();
+            }).then(
+                (result) => resultDiv.textContent = `The result of long polling is: ${result}`
+            ).catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            })
+        }
 
         function runPrintMessageTask() {
             // Adjust the URL and parameters as needed for your specific API
