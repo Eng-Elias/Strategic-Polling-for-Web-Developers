@@ -20,11 +20,11 @@ class PollingUtilities {
             handleMaximumRetriesError: (result) => {},
         },
         taskID,
-        pollingTimeout,
-        maxPollingRetries,
+        pollingTimeout = 5000,
+        maxPollingRetries = 100,
         isReadyResultCallback = ({ status }) => status === PollingUtilities.taskStatus.SUCCESS,
-        startSpinnerCallback,
-        stopSpinnerCallback,
+        startSpinnerCallback = () => {},
+        stopSpinnerCallback = () => {},
     }) {
         try {
             const response = await fetch(parameters.url, { method: 'GET' });
@@ -85,11 +85,11 @@ class PollingUtilities {
         taskURL,
         checkForResultsURL,
         maxPollingRetries = 100,
-        initialPollingTimeout = 1000,
+        initialPollingTimeout = 5000,
         taskURLSuccessCallback,
         isReadyResultCallback = ({ status }) => status === PollingUtilities.taskStatus.SUCCESS,
-        startSpinnerCallback,
-        stopSpinnerCallback,
+        startSpinnerCallback = () => {},
+        stopSpinnerCallback = () => {},
     }) {
         startSpinnerCallback();
         try {
