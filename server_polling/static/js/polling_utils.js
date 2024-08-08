@@ -25,6 +25,7 @@ class PollingUtilities {
         isReadyResultCallback = ({ status }) => status === PollingUtilities.taskStatus.SUCCESS,
         startSpinnerCallback = () => {},
         stopSpinnerCallback = () => {},
+        maxInterval = 30000,  // Maximum interval for gradual increase
     }) {
         try {
             const response = await fetch(parameters.url, { method: 'GET' });
@@ -48,6 +49,13 @@ class PollingUtilities {
                         parameters.finishPolling();
                     }
                 } else {
+                    // Fine-tuning polling strategy
+                    if (result.isCritical) {
+                        pollingTimeout = 5000;  // Faster polling for critical updates
+                    } else {
+                        pollingTimeout = Math.min(pollingTimeout + 5000, maxInterval);  // Gradually increase interval
+                    }
+
                     setTimeout(() => {
                         this.pollingFetchCheckForResult({
                             parameters,
@@ -57,6 +65,7 @@ class PollingUtilities {
                             isReadyResultCallback,
                             startSpinnerCallback,
                             stopSpinnerCallback,
+                            maxInterval,
                         });
                     }, pollingTimeout);
                 }
