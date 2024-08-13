@@ -102,7 +102,13 @@ class PollingUtilities {
     }) {
         startSpinnerCallback();
         try {
-            const taskResponse = await fetch(taskURL, { method: parameters.method, body: JSON.stringify(parameters.data) });
+            const taskResponse = await fetch(taskURL, {
+                method: parameters.method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(parameters.data)
+            });
             const taskResult = await taskResponse.json();
 
             if (taskURLSuccessCallback) {
