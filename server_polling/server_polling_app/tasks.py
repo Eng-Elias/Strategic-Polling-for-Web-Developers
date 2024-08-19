@@ -50,6 +50,5 @@ def solve_n_queens(n):
 def run_n_queen_task(task, n, *args, **kwargs):
     logger.info("Task started for {0} queens".format(n))
     results = solve_n_queens(n)
-    # text_result = "\n".join([str(result) for result in results])
-    # logger.info("Task finished for {0} queens: {1}".format(n, text_result))
+    logger.info("Task finished for {0} queens: {1}".format(n, results))
     return results
